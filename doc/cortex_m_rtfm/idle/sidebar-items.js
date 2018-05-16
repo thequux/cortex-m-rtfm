@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Context","The execution context of `idle`"],["Resources","Resources assigned to `idle`"]]});

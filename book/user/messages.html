@@ -1,0 +1,357 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Message passing - The RTFM book</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <base href="../">
+
+        <link rel="stylesheet" href="book.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <link rel="shortcut icon" href="favicon.png">
+
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="_FontAwesome/css/font-awesome.css">
+
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        
+
+        
+
+    </head>
+    <body class="light">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { } 
+            if (theme === null || theme === undefined) { theme = 'light'; }
+            document.body.className = theme;
+            document.querySelector('html').className = theme + ' js';
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <ol class="chapter"><li><a href="preface.html"><strong aria-hidden="true">1.</strong> Preface</a></li><li><a href="user/guide.html"><strong aria-hidden="true">2.</strong> User guide</a></li><li><ol class="section"><li><a href="user/basic.html"><strong aria-hidden="true">2.1.</strong> Basic organization</a></li><li><a href="user/events.html"><strong aria-hidden="true">2.2.</strong> Reacting to events</a></li><li><a href="user/state.html"><strong aria-hidden="true">2.3.</strong> Adding state</a></li><li><ol class="section"><li><a href="user/late-resources.html"><strong aria-hidden="true">2.3.1.</strong> Runtime initialized resources</a></li></ol></li><li><a href="user/messages.html" class="active"><strong aria-hidden="true">2.4.</strong> Message passing</a></li><li><a href="user/scheduling.html"><strong aria-hidden="true">2.5.</strong> Priority based scheduling</a></li><li><a href="user/sharing.html"><strong aria-hidden="true">2.6.</strong> Resource sharing</a></li><li><a href="user/pools.html"><strong aria-hidden="true">2.7.</strong> Object pools</a></li><li><a href="user/periodic.html"><strong aria-hidden="true">2.8.</strong> Periodic tasks</a></li></ol></li><li><a href="internals.html"><strong aria-hidden="true">3.</strong> Under the hood</a></li><li><ol class="section"><li><a href="internals/scheduler.html"><strong aria-hidden="true">3.1.</strong> The scheduler</a></li><li><a href="internals/claim.html"><strong aria-hidden="true">3.2.</strong> claim</a></li><li><a href="internals/messages.html"><strong aria-hidden="true">3.3.</strong> Message passing</a></li><li><ol class="section"><li><a href="internals/dispatcher.html"><strong aria-hidden="true">3.3.1.</strong> Dispatching tasks</a></li><li><a href="internals/schedule-now.html"><strong aria-hidden="true">3.3.2.</strong> schedule_now</a></li><li><a href="internals/capacity.html"><strong aria-hidden="true">3.3.3.</strong> Capacity</a></li></ol></li><li><a href="internals/tq.html"><strong aria-hidden="true">3.4.</strong> The timer queue</a></li><li><ol class="section"><li><a href="internals/tq/schedule-after.html"><strong aria-hidden="true">3.4.1.</strong> schedule_after</a></li><li><a href="internals/tq/handler.html"><strong aria-hidden="true">3.4.2.</strong> The timer queue handler</a></li></ol></li><li><a href="internals/ceilings.html"><strong aria-hidden="true">3.5.</strong> Ceiling analysis</a></li></ol></li></ol>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar" class="menu-bar">
+                    <div id="menu-bar-sticky-container">
+                        <div class="left-buttons">
+                            <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                                <i class="fa fa-paint-brush"></i>
+                            </button>
+                            <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                                <li role="none"><button role="menuitem" class="theme" id="light">Light <span class="default">(default)</span></button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                            </ul>
+                            
+                            <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                                <i class="fa fa-search"></i>
+                            </button>
+                            
+                        </div>
+
+                        <h1 class="menu-title">The RTFM book</h1> 
+
+                        <div class="right-buttons">
+                            <a href="print.html" title="Print this book" aria-label="Print this book">
+                                <i id="print-button" class="fa fa-print"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <a class="header" href="user/messages.html#message-passing" id="message-passing"><h1>Message passing</h1></a>
+<p>So far we have seen tasks as a way to respond to events but events are not the only way to start a
+task. A task can schedule another task, optionally passing a message to it.</p>
+<p>For example, consider the following application where data is received from the serial interface and
+collected into a buffer. <code>\n</code> is used as a frame delimiter; once a frame has been received we want
+to process the buffer contents but we don't want to do that in the <code>usart1</code> task because that task
+has to keep up with the fast incoming data and it should be short and high priority. So, instead we
+<em>send</em> the frame to a <em>lower priority</em> task for further processing; this way we keep the <code>usart1</code>
+task responsive.</p>
+<blockquote>
+<p>TODO graph: show timeline with events</p>
+</blockquote>
+<blockquote>
+<p>TODO use cases section</p>
+</blockquote>
+<blockquote>
+<p>TODO &quot;vs threads&quot; dead lock freedom</p>
+</blockquote>
+<blockquote>
+<p>TODO transition from bare metal programming</p>
+</blockquote>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#![feature(proc_macro)]
+#![no_std]
+
+#fn main() {
+extern crate cortex_m_rtfm;
+extern crate heapless;
+
+use cortex_m_rtfm::app;
+use heapless::Vec;
+use heapless::consts::*;
+
+app! {
+    device: stm32f103xx,
+
+    resources: {
+        // 128-byte buffer
+        static BUFFER: Vec&lt;u8, U128&gt; = Vec::new();
+
+        // omitted: other resources
+    },
+
+    // TODO explain this
+    free_interrupts: [EXTI0],
+
+    tasks: {
+        // task bound to an interrupt
+        usart1: {
+            // event = data arrived via the serial interface
+            interrupt: USART1,
+
+            // higher priority number = more urgent
+            priority: 2,
+
+            // omitted: the exact list of resources assigned to this task
+
+            // tasks that this task can schedule
+            schedule_now: [process],
+        },
+
+        // task schedulable by other tasks
+        process: {
+            // the input this task expects
+            input: Vec&lt;u8, U128&gt;,
+
+            // if omitted `priority` is assumed to be `1`
+            // priority: 1,
+        },
+    },
+}
+
+// omitted: `init` and `idle`
+
+fn usart1(ctxt: usart1::Context) {
+    const FRAME_DELIMITER: u8 = b'\n';
+
+    let t = &amp;mut ctxt.threshold;
+    let tasks = ctxt.tasks;
+
+    let buffer: &amp;mut Vec&lt;u8, U128&gt; = ctxt.resources.BUFFER;
+    let serial: &amp;mut Serial = ctxt.resources.SERIAL;
+
+    // reads a single byte from the serial interface
+    let byte = serial.read();
+
+    if byte == FRAME_DELIMITER {
+        tasks.process.schedule_now(t, buffer.clone()).unwrap();
+        buffer.clear();
+    } else {
+        if buffer.push(byte).is_err() {
+            // omitted: error handling
+        }
+    }
+}
+
+fn process(ctxt: process::Context) {
+    let buffer: Vec&lt;u8, U128&gt; = ctxt.input;
+
+    match &amp;buffer[..] {
+         &quot;command1&quot; =&gt; /* .. */,
+         &quot;command2&quot; =&gt; /* .. */,
+         // ..
+         _ =&gt; /* .. */,
+    }
+}
+#}</code></pre></pre>
+<p>Here we have the <code>exti0</code> task scheduling the <code>process</code> task. The <code>process</code> task expects some input;
+the second argument of <code>schedule_now</code> is the expected input. This argument will be sent as a message
+to the <code>process</code> task.</p>
+<p>Only types that implement the <code>Send</code> trait and have a <code>'static</code> lifetimes can be sent as messages.
+This means that messages can't contain references to things like values allocated on the stack of
+the task or references to the state of a task.</p>
+<p>This constrain forces us to sent a copy of the buffer, which is 128 bytes in size, rather than a
+reference, which is 4 bytes in size -- this is rather expensive in terms of memory and execution
+time. In a future section we'll see how to make messages much smaller using object pools.</p>
+<a class="header" href="user/messages.html#how-is-this-different-from-a-function-call" id="how-is-this-different-from-a-function-call"><h2>How is this different from a function call?</h2></a>
+<p>You may be wondering how is message passing different that doing a simple function call as shown
+below:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+fn usart1(ctxt: usart1::Context) {
+    const FRAME_DELIMITER: u8 = b'\n';
+
+    let buffer: &amp;mut _ = ctxt.resources.BUFFER;
+    let serial: &amp;mut _ = ctxt.resources.SERIAL;
+
+    // reads a single byte from the serial interface
+    let byte = serial.read();
+
+    if byte == FRAME_DELIMITER {
+        process(buffer);
+    } else {
+        if buffer.push(byte).is_err() {
+            // omitted: error handling
+        }
+    }
+}
+
+fn process(buffer: &amp;Vec&lt;u8, U128&gt;) {
+    match &amp;buffer[..] {
+         &quot;command1&quot; =&gt; /* .. */,
+         &quot;command2&quot; =&gt; /* .. */,
+         // ..
+         _ =&gt; /* .. */,
+    }
+}
+#}</code></pre></pre>
+<p>The function call approach even avoids the expensive copy of the buffer!</p>
+<p>The main difference is that a function call will execute <code>process</code> in the <em>same</em> execution context
+as the <code>usart1</code> task extending the execution time of the <code>usart1</code> task. Whereas making <code>process</code>
+into its own task means that it can be scheduled separately.</p>
+<p>In this particular case the <code>process</code> task has lower priority than the <code>usart1</code> task so it won't be
+executed until <em>after</em> the <code>usart1</code> task ends. Also, preemption is possible: if a <code>USART1</code> event
+occurs while executing the <code>process</code> task the scheduler will prioritize the execution of the
+<code>usart1</code> task. The next section has more details about priority based scheduling.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+                            <a rel="prev" href="user/late-resources.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+
+                        
+                            <a rel="next" href="user/scheduling.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+                    <a href="user/late-resources.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+                    <a href="user/scheduling.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                
+            </nav>
+
+        </div>
+
+        
+
+        
+
+        
+
+        
+
+        
+        <script src="searchindex.js" type="text/javascript" charset="utf-8"></script>
+        
+        
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        
+
+    </body>
+</html>

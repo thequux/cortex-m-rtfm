@@ -1,0 +1,389 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Resource sharing - The RTFM book</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <base href="../">
+
+        <link rel="stylesheet" href="book.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <link rel="shortcut icon" href="favicon.png">
+
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="_FontAwesome/css/font-awesome.css">
+
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        
+
+        
+
+    </head>
+    <body class="light">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { } 
+            if (theme === null || theme === undefined) { theme = 'light'; }
+            document.body.className = theme;
+            document.querySelector('html').className = theme + ' js';
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <ol class="chapter"><li><a href="preface.html"><strong aria-hidden="true">1.</strong> Preface</a></li><li><a href="user/guide.html"><strong aria-hidden="true">2.</strong> User guide</a></li><li><ol class="section"><li><a href="user/basic.html"><strong aria-hidden="true">2.1.</strong> Basic organization</a></li><li><a href="user/events.html"><strong aria-hidden="true">2.2.</strong> Reacting to events</a></li><li><a href="user/state.html"><strong aria-hidden="true">2.3.</strong> Adding state</a></li><li><ol class="section"><li><a href="user/late-resources.html"><strong aria-hidden="true">2.3.1.</strong> Runtime initialized resources</a></li></ol></li><li><a href="user/messages.html"><strong aria-hidden="true">2.4.</strong> Message passing</a></li><li><a href="user/scheduling.html"><strong aria-hidden="true">2.5.</strong> Priority based scheduling</a></li><li><a href="user/sharing.html" class="active"><strong aria-hidden="true">2.6.</strong> Resource sharing</a></li><li><a href="user/pools.html"><strong aria-hidden="true">2.7.</strong> Object pools</a></li><li><a href="user/periodic.html"><strong aria-hidden="true">2.8.</strong> Periodic tasks</a></li></ol></li><li><a href="internals.html"><strong aria-hidden="true">3.</strong> Under the hood</a></li><li><ol class="section"><li><a href="internals/scheduler.html"><strong aria-hidden="true">3.1.</strong> The scheduler</a></li><li><a href="internals/claim.html"><strong aria-hidden="true">3.2.</strong> claim</a></li><li><a href="internals/messages.html"><strong aria-hidden="true">3.3.</strong> Message passing</a></li><li><ol class="section"><li><a href="internals/dispatcher.html"><strong aria-hidden="true">3.3.1.</strong> Dispatching tasks</a></li><li><a href="internals/schedule-now.html"><strong aria-hidden="true">3.3.2.</strong> schedule_now</a></li><li><a href="internals/capacity.html"><strong aria-hidden="true">3.3.3.</strong> Capacity</a></li></ol></li><li><a href="internals/tq.html"><strong aria-hidden="true">3.4.</strong> The timer queue</a></li><li><ol class="section"><li><a href="internals/tq/schedule-after.html"><strong aria-hidden="true">3.4.1.</strong> schedule_after</a></li><li><a href="internals/tq/handler.html"><strong aria-hidden="true">3.4.2.</strong> The timer queue handler</a></li></ol></li><li><a href="internals/ceilings.html"><strong aria-hidden="true">3.5.</strong> Ceiling analysis</a></li></ol></li></ol>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar" class="menu-bar">
+                    <div id="menu-bar-sticky-container">
+                        <div class="left-buttons">
+                            <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                                <i class="fa fa-paint-brush"></i>
+                            </button>
+                            <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                                <li role="none"><button role="menuitem" class="theme" id="light">Light <span class="default">(default)</span></button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                            </ul>
+                            
+                            <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                                <i class="fa fa-search"></i>
+                            </button>
+                            
+                        </div>
+
+                        <h1 class="menu-title">The RTFM book</h1> 
+
+                        <div class="right-buttons">
+                            <a href="print.html" title="Print this book" aria-label="Print this book">
+                                <i id="print-button" class="fa fa-print"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <a class="header" href="user/sharing.html#resource-sharing" id="resource-sharing"><h1>Resource sharing</h1></a>
+<p>We mentioned that in RTFM message passing is preferred over sharing state but sometimes the need of
+shared state arises so let's look at an example.</p>
+<p>Let's say we have an application with three tasks: one reads data from an accelerometer, the other
+reads data from a gyroscope and the last one processes both the accelerometer and gyroscope data.
+The first two tasks run periodically at 1 KHz (one thousand times per second); the third task must
+start after the other two tasks are done and consumes the data each task produces. Here's one way to
+implement such program:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#![feature(proc_macro)]
+#![no_std]
+
+#fn main() {
+extern crate cortex_m_rtfm;
+
+use cortex_m_rtfm::app;
+
+struct Acceleration { x: u16, y: u16, z: u16 }
+
+struct AngularRate { x: u16, y: u16, z: u16 }
+
+enum Data {
+    Empty,
+    Acceleration(Acceleration),
+    AngularRate(AngularRate),
+}
+
+app! {
+    device: stm32f103xx,
+
+    resources: {
+        static DATA: Data = Data::Empty;
+
+        // omitted: other resources
+    },
+
+    tasks: {
+        accelerometer: {
+            resources: [ACCELEROMETER, DATA],
+
+            schedule_now: [process],
+
+            // priority: 1,
+
+            // omitted: interrupt source
+        },
+
+        gyroscope: {
+            resources: [GYROSCOPE, DATA],
+
+            schedule_now: [process],
+
+            // priority: 1,
+
+            // omitted: interrupt source
+        },
+
+        process: {
+            input: (Acceleration, AngularRate),
+        },
+    }
+}
+
+// omitted: `init`, `idle` and `process`
+
+fn accelerometer(ctxt: accelerometer::Context) {
+    let accelerometer = ctxt.resources.ACCELEROMETER;
+    let acceleration = accelerometer.read();
+
+    let t = &amp;mut ctxt.threshold;
+
+    let angular_rate = {
+        let data: &amp;mut Data = ctxt.resources.DATA.borrow_mut(t);
+
+        match *data {
+            // store data
+            Data::Empty =&gt; {
+                *data = Data::Acceleration(acceleration);
+                None
+            },
+
+            // overwrite old data
+            Data::Acceleration(..) =&gt; {
+                *data = Data::Acceleration(acceleration);
+                None
+            },
+
+            // data pair is ready
+            Data::AngularRate(angular_rate) =&gt; {
+                *data = Data::Empty;
+                Some(angular_rate)
+            },
+        }
+    };
+
+    if let Some(angular_rate) = angular_rate {
+        ctxt.tasks.process.schedule_now(t, (acceleration, angular_rate)).unwrap();
+    }
+}
+
+fn gyroscope(ctxt: accelerometer::Context) {
+    let gyroscope = ctxt.resources.GYROSCOPE;
+    let angular_rate = gyroscope.read();
+
+    let t = &amp;mut ctxt.threshold;
+
+    let acceleration = {
+        let data = ctxt.resources.DATA.borrow_mut(t);
+
+        match *data {
+            // store data
+            Data::Empty =&gt; {
+                *data = Data::AngularRate(angular_rate);
+                None
+            },
+
+            // data pair is ready
+            Data::Acceleration(acceleration) =&gt; {
+                *data = Data::Empty;
+                Some(acceleration)
+            },
+
+            // overwrite old data
+            Data::AngularRate(angular_rate) =&gt; {
+                *data = Data::AngularRate(angular_rate);
+                None
+            },
+        }
+    };
+
+    if let Some(acceleration) = acceleration {
+        ctxt.tasks.process.schedule_now(t, (acceleration, angular_rate)).unwrap();
+    }
+}
+#}</code></pre></pre>
+<p>In this program the tasks <code>acceloremeter</code> and <code>gyroscope</code> share the <code>DATA</code> resource. This resource
+can contain either sensor reading or no data at all. The idea is that either sensor task can start
+the <code>process</code> task but only the one that has both readings will do. That's where <code>DATA</code> comes in: if
+the <code>accelerometer</code> task happens first it stores its reading into <code>DATA</code>; then when the <code>gyroscope</code>
+task occurs it <em>takes</em> the acceloremeter reading from <code>DATA</code>, leaving it empty, and schedules the
+<code>process</code> task passing both readings. This setup also supports the other scenario where the
+<code>gyroscope</code> task starts before the <code>accelerometer</code> task.</p>
+<p>In this particular case both sensor tasks operate at the same priority so preemption is not
+possible: if both tasks need to run at about the same time one will run <em>after</em> the other. Without
+preemption a data race is not possible so each task can directly borrow (<code>borrow</code> / <code>borrow_mut</code>)
+the contents of <code>DATA</code>.</p>
+<a class="header" href="user/sharing.html#claim" id="claim"><h2><code>claim*</code></h2></a>
+<p>If, instead, the sensor tasks had different priorities then the lowest priority task would need to
+<em>claim</em> (<code>claim</code> / <code>claim_mut</code>) the resource. <code>claim*</code> creates a critical section and grants access
+to the contents of a resource for the span of the critical section. To illustrate let's increase the
+priority of <code>accelerometer</code> to 2; <code>gyroscope</code> would then have to access <code>DATA</code> like this:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+fn gyroscope(ctxt: accelerometer::Context) {
+    let gyroscope = ctxt.resources.GYROSCOPE;
+    let angular_rate = gyroscope.read();
+
+    let t = &amp;mut ctxt.threshold;
+
+    let acceleration = ctxt.resources.DATA.claim_mut(t, |data: &amp;mut Data, _| {
+        // start of critical section
+        match *data {
+            // store data
+            Data::Empty =&gt; {
+                *data = Data::AngularRate(angular_rate);
+                None
+            },
+
+            // data pair is ready
+            Data::Acceleration(acceleration) =&gt; {
+                *data = Data::Empty;
+                Some(acceleration)
+            },
+
+            // overwrite old data
+            Data::AngularRate(angular_rate) =&gt; {
+                *data = Data::AngularRate(angular_rate);
+                None
+            },
+        }
+        // end of critical section
+    });
+
+    if let Some(acceleration) = acceleration {
+        ctxt.tasks.process.schedule_now(t, (acceleration, angular_rate)).unwrap();
+    }
+}
+#}</code></pre></pre>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+                            <a rel="prev" href="user/scheduling.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+
+                        
+                            <a rel="next" href="user/pools.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+                    <a href="user/scheduling.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+                    <a href="user/pools.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                
+            </nav>
+
+        </div>
+
+        
+
+        
+
+        
+
+        
+
+        
+        <script src="searchindex.js" type="text/javascript" charset="utf-8"></script>
+        
+        
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        
+
+    </body>
+</html>

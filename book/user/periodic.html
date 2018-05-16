@@ -1,0 +1,279 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Periodic tasks - The RTFM book</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <base href="../">
+
+        <link rel="stylesheet" href="book.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <link rel="shortcut icon" href="favicon.png">
+
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="_FontAwesome/css/font-awesome.css">
+
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        
+
+        
+
+    </head>
+    <body class="light">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { } 
+            if (theme === null || theme === undefined) { theme = 'light'; }
+            document.body.className = theme;
+            document.querySelector('html').className = theme + ' js';
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <ol class="chapter"><li><a href="preface.html"><strong aria-hidden="true">1.</strong> Preface</a></li><li><a href="user/guide.html"><strong aria-hidden="true">2.</strong> User guide</a></li><li><ol class="section"><li><a href="user/basic.html"><strong aria-hidden="true">2.1.</strong> Basic organization</a></li><li><a href="user/events.html"><strong aria-hidden="true">2.2.</strong> Reacting to events</a></li><li><a href="user/state.html"><strong aria-hidden="true">2.3.</strong> Adding state</a></li><li><ol class="section"><li><a href="user/late-resources.html"><strong aria-hidden="true">2.3.1.</strong> Runtime initialized resources</a></li></ol></li><li><a href="user/messages.html"><strong aria-hidden="true">2.4.</strong> Message passing</a></li><li><a href="user/scheduling.html"><strong aria-hidden="true">2.5.</strong> Priority based scheduling</a></li><li><a href="user/sharing.html"><strong aria-hidden="true">2.6.</strong> Resource sharing</a></li><li><a href="user/pools.html"><strong aria-hidden="true">2.7.</strong> Object pools</a></li><li><a href="user/periodic.html" class="active"><strong aria-hidden="true">2.8.</strong> Periodic tasks</a></li></ol></li><li><a href="internals.html"><strong aria-hidden="true">3.</strong> Under the hood</a></li><li><ol class="section"><li><a href="internals/scheduler.html"><strong aria-hidden="true">3.1.</strong> The scheduler</a></li><li><a href="internals/claim.html"><strong aria-hidden="true">3.2.</strong> claim</a></li><li><a href="internals/messages.html"><strong aria-hidden="true">3.3.</strong> Message passing</a></li><li><ol class="section"><li><a href="internals/dispatcher.html"><strong aria-hidden="true">3.3.1.</strong> Dispatching tasks</a></li><li><a href="internals/schedule-now.html"><strong aria-hidden="true">3.3.2.</strong> schedule_now</a></li><li><a href="internals/capacity.html"><strong aria-hidden="true">3.3.3.</strong> Capacity</a></li></ol></li><li><a href="internals/tq.html"><strong aria-hidden="true">3.4.</strong> The timer queue</a></li><li><ol class="section"><li><a href="internals/tq/schedule-after.html"><strong aria-hidden="true">3.4.1.</strong> schedule_after</a></li><li><a href="internals/tq/handler.html"><strong aria-hidden="true">3.4.2.</strong> The timer queue handler</a></li></ol></li><li><a href="internals/ceilings.html"><strong aria-hidden="true">3.5.</strong> Ceiling analysis</a></li></ol></li></ol>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar" class="menu-bar">
+                    <div id="menu-bar-sticky-container">
+                        <div class="left-buttons">
+                            <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                                <i class="fa fa-paint-brush"></i>
+                            </button>
+                            <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                                <li role="none"><button role="menuitem" class="theme" id="light">Light <span class="default">(default)</span></button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                            </ul>
+                            
+                            <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                                <i class="fa fa-search"></i>
+                            </button>
+                            
+                        </div>
+
+                        <h1 class="menu-title">The RTFM book</h1> 
+
+                        <div class="right-buttons">
+                            <a href="print.html" title="Print this book" aria-label="Print this book">
+                                <i id="print-button" class="fa fa-print"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <a class="header" href="user/periodic.html#periodic-tasks" id="periodic-tasks"><h1>Periodic tasks</h1></a>
+<p>We have seen the <code>schedule_now</code> method which is used to schedule tasks to run immediately. RTFM
+also allows scheduling tasks to run some time in the future via the <code>schedule_in</code> API. In a nutshell
+the <code>schedule_in</code> lets you schedule a task to run in a certain number of clock (HCLK) cycles in the
+future. The offset that the <code>schedule_in</code> takes as argument is added to the <em>scheduled start time</em>
+of the <em>current</em> task to compute the scheduled start time of the newly scheduled task. This lets you
+create periodic tasks without accumulating drift.</p>
+<p><strong>NOTE</strong> Using the <code>scheduled_in</code> API requires enabling the &quot;timer-queue&quot; feature.</p>
+<p>Let's look at an example:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#![feature(proc_macro)]
+#![no_std]
+
+#fn main() {
+extern crate cortex_m_rtfm;
+
+use cortex_m_rtfm::app;
+
+app! {
+    device: stm32f103xx,
+
+    init: {
+        schedule_now: [a],
+    },
+
+    tasks: {
+        a: {
+            schedule_after: [a],
+        },
+    },
+}
+
+fn init(ctxt: init::Context) -&gt; init::LateResources {
+    let t = &amp;mut ctxt.threshold;
+
+    ctxt.tasks.a.schedule_now(t, ());
+}
+
+// number of clock cycles equivalent to 1 second
+const S: u32 = 8_000_000;
+
+fn a(ctxt: a::Context) {
+    // `u32` timestamp that corresponds to now
+    let now = rtfm::now();
+
+    let t = &amp;mut ctxt.threshold;
+
+    println!(&quot;a(ss={}, now={})&quot;, ctxt.scheduled_start, now);
+
+    a.tasks.a.schedule_after(t, 1 * S, ());
+}
+#}</code></pre></pre>
+<p>This program runs a single task that's executed every second and it prints the following:</p>
+<pre><code class="language-text">a(ss=0, now=71)
+a(ss=8000000, now=8000171)
+a(ss=16000000, now=16000171)
+</code></pre>
+<p><code>init</code> is not a task but all tasks scheduled from it assume that <code>init</code> has a scheduled start of <code>t = 0</code> which represents the time at which <code>init</code> ends and all tasks can start. <code>schedule_now</code> makes
+the scheduled task inherit the scheduled start of the current task; in this case the first instance
+of <code>a</code> inherits the scheduled start of <code>init</code>, that is <code>t = 0</code>.</p>
+<p>Task <code>a</code> schedules itself to run <code>S</code> cycles (1 second) in the future. The scheduled start of
+its next instance will be its current scheduled start plus <code>S</code> cycles. Thus, the second instance of
+<code>a</code> is scheduled to start at <code>t = 1 * S</code>, the third instance is scheduled to start at <code>t = 2 * S</code>
+and so on. Note that it doesn't matter when or where in the body of <code>a</code> <code>schedule_after</code> is invoked;
+the outcome will be the same.</p>
+<p>Now the <code>scheduled_start</code> of a task is not the <em>exact</em> time at which the task will run -- this can
+be seen in the output of the above program: <code>now</code> doesn't match the scheduled start. There's some
+overhead in the task dispatcher so a task will usually run dozens of cycles after its scheduled
+start time. Also, priority based scheduling can make lower priority tasks run much later than their
+scheduled start time; for example, imagine the scenario where two tasks have the same scheduled
+start but different priorities.</p>
+<a class="header" href="user/periodic.html#scheduled_after-and-events" id="scheduled_after-and-events"><h2><code>scheduled_after</code> and events</h2></a>
+<p>Tasks that spawn from <code>init</code> have predictable scheduled starts because <code>init</code> itself has a scheduled
+start of <code>t = 0</code>, but what happens with tasks triggered by events which can start at any time? These
+tasks use <code>rtfm::now()</code> as an <em>estimate</em> of their scheduled start. In the best-case scenario
+<code>rtfm::now()</code> will be very close to the time at which the event happened. But, if the task has low
+priority it may not run until other high priority tasks are done; in this scenario <code>rtfm::now()</code>,
+and thus the estimated scheduled start, could be very far off from the real time at which the event
+happened. Take this in consideration when using <code>scheduled_after</code> from tasks triggered by events.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+                            <a rel="prev" href="user/pools.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+
+                        
+                            <a rel="next" href="internals.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+                    <a href="user/pools.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+                    <a href="internals.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                
+            </nav>
+
+        </div>
+
+        
+
+        
+
+        
+
+        
+
+        
+        <script src="searchindex.js" type="text/javascript" charset="utf-8"></script>
+        
+        
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        
+
+    </body>
+</html>

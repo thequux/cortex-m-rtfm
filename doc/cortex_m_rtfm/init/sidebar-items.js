@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Context","Execution context of `init`"],["Core",""],["Device","Device specific peripherals"],["Resources","Resources assigned to `init`"],["Tasks","Tasks that `init` can schedule"]]});

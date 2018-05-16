@@ -1,0 +1,317 @@
+<!DOCTYPE HTML>
+<html lang="en" class="sidebar-visible no-js">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Dispatching tasks - The RTFM book</title>
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff" />
+
+        <base href="../">
+
+        <link rel="stylesheet" href="book.css">
+        <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800" rel="stylesheet" type="text/css">
+        <link href="https://fonts.googleapis.com/css?family=Source+Code+Pro:500" rel="stylesheet" type="text/css">
+
+        <link rel="shortcut icon" href="favicon.png">
+
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="_FontAwesome/css/font-awesome.css">
+
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        
+
+        
+
+    </head>
+    <body class="light">
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script type="text/javascript">
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script type="text/javascript">
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { } 
+            if (theme === null || theme === undefined) { theme = 'light'; }
+            document.body.className = theme;
+            document.querySelector('html').className = theme + ' js';
+        </script>
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script type="text/javascript">
+            var html = document.querySelector('html');
+            var sidebar = 'hidden';
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            }
+            html.classList.remove('sidebar-visible');
+            html.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <ol class="chapter"><li><a href="preface.html"><strong aria-hidden="true">1.</strong> Preface</a></li><li><a href="user/guide.html"><strong aria-hidden="true">2.</strong> User guide</a></li><li><ol class="section"><li><a href="user/basic.html"><strong aria-hidden="true">2.1.</strong> Basic organization</a></li><li><a href="user/events.html"><strong aria-hidden="true">2.2.</strong> Reacting to events</a></li><li><a href="user/state.html"><strong aria-hidden="true">2.3.</strong> Adding state</a></li><li><ol class="section"><li><a href="user/late-resources.html"><strong aria-hidden="true">2.3.1.</strong> Runtime initialized resources</a></li></ol></li><li><a href="user/messages.html"><strong aria-hidden="true">2.4.</strong> Message passing</a></li><li><a href="user/scheduling.html"><strong aria-hidden="true">2.5.</strong> Priority based scheduling</a></li><li><a href="user/sharing.html"><strong aria-hidden="true">2.6.</strong> Resource sharing</a></li><li><a href="user/pools.html"><strong aria-hidden="true">2.7.</strong> Object pools</a></li><li><a href="user/periodic.html"><strong aria-hidden="true">2.8.</strong> Periodic tasks</a></li></ol></li><li><a href="internals.html"><strong aria-hidden="true">3.</strong> Under the hood</a></li><li><ol class="section"><li><a href="internals/scheduler.html"><strong aria-hidden="true">3.1.</strong> The scheduler</a></li><li><a href="internals/claim.html"><strong aria-hidden="true">3.2.</strong> claim</a></li><li><a href="internals/messages.html"><strong aria-hidden="true">3.3.</strong> Message passing</a></li><li><ol class="section"><li><a href="internals/dispatcher.html" class="active"><strong aria-hidden="true">3.3.1.</strong> Dispatching tasks</a></li><li><a href="internals/schedule-now.html"><strong aria-hidden="true">3.3.2.</strong> schedule_now</a></li><li><a href="internals/capacity.html"><strong aria-hidden="true">3.3.3.</strong> Capacity</a></li></ol></li><li><a href="internals/tq.html"><strong aria-hidden="true">3.4.</strong> The timer queue</a></li><li><ol class="section"><li><a href="internals/tq/schedule-after.html"><strong aria-hidden="true">3.4.1.</strong> schedule_after</a></li><li><a href="internals/tq/handler.html"><strong aria-hidden="true">3.4.2.</strong> The timer queue handler</a></li></ol></li><li><a href="internals/ceilings.html"><strong aria-hidden="true">3.5.</strong> Ceiling analysis</a></li></ol></li></ol>
+        </nav>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                
+                <div id="menu-bar" class="menu-bar">
+                    <div id="menu-bar-sticky-container">
+                        <div class="left-buttons">
+                            <button id="sidebar-toggle" class="icon-button" type="button" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                                <i class="fa fa-bars"></i>
+                            </button>
+                            <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                                <i class="fa fa-paint-brush"></i>
+                            </button>
+                            <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                                <li role="none"><button role="menuitem" class="theme" id="light">Light <span class="default">(default)</span></button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                                <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                            </ul>
+                            
+                            <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                                <i class="fa fa-search"></i>
+                            </button>
+                            
+                        </div>
+
+                        <h1 class="menu-title">The RTFM book</h1> 
+
+                        <div class="right-buttons">
+                            <a href="print.html" title="Print this book" aria-label="Print this book">
+                                <i id="print-button" class="fa fa-print"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" name="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+                
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script type="text/javascript">
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <a class="header" href="internals/dispatcher.html#dispatching-tasks" id="dispatching-tasks"><h1>Dispatching tasks</h1></a>
+<p>Let's first analyze the simpler case of dispatching tasks with <code>input</code> type of <code>()</code>, i.e. the
+message contained no payload, and was scheduled using <code>schedule_now</code>.</p>
+<p>All tasks scheduled by other tasks, i.e. tasks not bound to an interrupt, that are to be executed at
+the same priority are dispatched from the same <em>task dispatcher</em>. Task dispatchers are implemented
+on top of the free interrupt handlers which are declared in <code>free_interrupts</code>. Each task dispatcher
+has a queue of tasks ready to execute -- this queues are called <em>ready queues</em>. RTFM uses
+<code>heapless::RingBuffer</code> for all the internal queues; these queues are lock-free and wait-free when
+the queue has a single consumer and a single producer.</p>
+<p>Let's illustrate the workings of task dispatchers with an example. Assume we have an application
+with 4 tasks not bound to interrupts: two of them, <code>a</code> and <code>b</code>, are dispatched at priority 1; and
+the other two, <code>c</code> and <code>d</code>, are dispatched at priority 2. This is what the task dispatchers produced
+by the <code>app!</code> macro look like:</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+// priority = 1
+unsafe extern &quot;C&quot; fn EXTI0() {
+    while let Some(task) = __1::READY_QUEUE.dequeue() {
+        match task {
+            __1::Task::a =&gt; a(a::Context::new()),
+            __1::Task::b =&gt; b(b::Context::new()),
+        }
+    }
+}
+
+// priority = 2
+unsafe extern &quot;C&quot; fn EXTI1() {
+    while let Some(task) = __2::READY_QUEUE.dequeue() {
+        match task {
+            __2::Task::c =&gt; c(c::Context::new()),
+            __2::Task::d =&gt; d(d::Context::new()),
+        }
+    }
+}
+
+mod __1 {
+    // Tasks dispatched at priority = 1
+    enum Task { a, b }
+
+    static mut READY_QUEUE: Queue&lt;Task, UN&gt; = Queue::new();
+}
+
+mod __2 {
+    // Tasks dispatched at priority = 2
+    enum Task { c, d }
+
+    static mut READY_QUEUE: Queue&lt;Task, UN&gt; = Queue::new();
+}
+#}</code></pre></pre>
+<p>Note that we have two queues here: one for priority = 1 and another for priority = 2. The
+interrupts used to dispatch tasks are chosen from the list of <code>free_interrupts</code> declared in the
+<code>app!</code> macro.</p>
+<a class="header" href="internals/dispatcher.html#payloads" id="payloads"><h4>Payloads</h4></a>
+<p>Now let's add payloads to the messages. The message queues will now not only store the task name
+(<code>enum Task</code>) but also an <em>index</em> (<code>u8</code>) to the payload.</p>
+<p>Let's first look at how the first task dispatcher changed: let's say that tasks <code>a</code> and <code>b</code> now
+expect payloads of <code>i32</code> and <code>i16</code>, respectively.</p>
+<pre><pre class="playpen"><code class="language-rust">
+# #![allow(unused_variables)]
+#fn main() {
+mod a {
+    static mut PAYLOADS: [i32; N] = unsafe { uninitialized() };
+
+    static mut FREE_QUEUE: Queue&lt;u8, UN&gt; = Queue::new();
+
+    // ..
+}
+
+mod b {
+    static mut PAYLOADS: [i16; N] = unsafe { uninitialized() };
+
+    static mut FREE_QUEUE: Queue&lt;u8, UN&gt; = Queue::new();
+
+    // ..
+}
+
+mod __1 {
+    // Tasks dispatched at priority = 1
+    enum Task { a, b }
+
+    static mut READY_QUEUE: Queue&lt;(Task, u8), UN&gt; = Queue::new();
+}
+
+mod __2 {
+    // Tasks dispatched at priority = 2
+    enum Task { c, d }
+
+    static mut READY_QUEUE: Queue&lt;(Task, u8), UN&gt; = Queue::new();
+}
+
+// priority = 1
+unsafe extern &quot;C&quot; fn EXTI0() {
+    while let Some(task) = READY_QUEUE.dequeue() {
+        match (task, index) {
+            __1::Task::a =&gt; {
+                let payload: i32 = ptr::read(&amp;a::PAYLOADS[index]);
+                a::FREE_QUEUE.enqueue_unchecked(index);
+
+                a(a::Context::new(payload))
+            },
+            __2::Task::b =&gt; {
+                let payload: i16 = ptr::read(&amp;b::PAYLOADS[index]);
+                b::FREE_QUEUE.enqueue_unchecked(index);
+
+                b(b::Context::new(payload))
+            },
+        }
+    }
+}
+#}</code></pre></pre>
+<p>Each task dispatcher continuously dequeues tasks from the ready queue until it's empty. After
+dequeuing a task - index pair the task dispatcher looks at which task it has to execute (<code>match</code>)
+and uses this information to fetch (<code>ptr::read</code>) the payload from the corresponding list of
+payloads (<code>PAYLOADS</code>) -- there's one such list per task. After retrieving the payload this leaves an
+empty slot in the list of payloads; the index to this empty slot is appended to a list of free slots
+(<code>FREE_QUEUE</code>). Finally, the task dispatcher proceed to execute the task using the message payload
+as the input.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                        
+                            <a rel="prev" href="internals/messages.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+                        
+
+                        
+                            <a rel="next" href="internals/schedule-now.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                
+                    <a href="internals/messages.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                
+
+                
+                    <a href="internals/schedule-now.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                
+            </nav>
+
+        </div>
+
+        
+
+        
+
+        
+
+        
+
+        
+        <script src="searchindex.js" type="text/javascript" charset="utf-8"></script>
+        
+        
+        <script src="elasticlunr.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="mark.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="searcher.js" type="text/javascript" charset="utf-8"></script>
+        
+
+        <script src="clipboard.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="highlight.js" type="text/javascript" charset="utf-8"></script>
+        <script src="book.js" type="text/javascript" charset="utf-8"></script>
+
+        <!-- Custom JS scripts -->
+        
+
+    </body>
+</html>
