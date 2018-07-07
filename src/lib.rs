@@ -147,7 +147,7 @@
 #![deny(warnings)]
 #![feature(const_fn)]
 #![feature(never_type)]
-#![feature(proc_macro)]
+#![feature(use_extern_macros)]
 #![feature(untagged_unions)]
 #![no_std]
 
